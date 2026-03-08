@@ -5,15 +5,17 @@
 #include <iostream>
 #include <vector>
 
+// It might change to 32 bit, I didn't make my mind yet.
 using countType = uint64_t;
 using keyType = uint64_t;
 
-using counterType = std::vector<countType>;
 
-struct Counter {
+struct CounterBucket {
     countType counter;
     keyType key;
 };
+
+using counterType = std::vector<CounterBucket>;
 
 class Sketch {
 public:

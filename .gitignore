@@ -1,1 +1,4 @@
 /snakemake-env
+/.snakemake
+/experiments
+/datasets

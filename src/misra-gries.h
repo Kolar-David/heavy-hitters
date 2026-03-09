@@ -8,7 +8,7 @@ class MisraGries : public Sketch {
 public:
     MisraGries(countType k, std::string& inputFilePath, std::string& outputFilePath);
     size_t size() override;
-    void run() override;
+    void runSketch() override;
     void saveOutputToFile() override;
 private:
     countType k;

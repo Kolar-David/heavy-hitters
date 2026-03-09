@@ -28,7 +28,7 @@ void MisraGries::update(keyType value) {
     }
 }
 
-void MisraGries::run() {
+void MisraGries::runSketch() {
     for (auto val : input) {
         update(val);
     }

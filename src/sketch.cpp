@@ -29,5 +29,6 @@ void Sketch::storeCountsToFile() {
 
 void Sketch::run() {
     // TODO timer
+    loadInputFromFile();
     runSketch();
 }

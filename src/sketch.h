@@ -22,9 +22,7 @@ public:
     Sketch(std::string& inputFilePath, std::string& outputFilePath): inputFilePath(inputFilePath), outputFilePath(outputFilePath) {};
     virtual size_t size() = 0;
     void run();
-    void returnTimeOfExecution() = 0;
     counterType storeCountsToCounter() = 0;
-    void loadInputFromFile();
 
 protected:
     std::string inputFilePath;
@@ -32,6 +30,7 @@ protected:
     std::vector<keyType> input;
     void storeCountsToFile();
     virtual void runSketch() = 0;
+    void loadInputFromFile();
 
 };
 #endif

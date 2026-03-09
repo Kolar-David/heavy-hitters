@@ -1,0 +1,7 @@
+datasets:
+  zipf_small:
+    distribution: zipf
+    n: 20
+    file_number: 3
+    seed: 123
+    param: 1.1

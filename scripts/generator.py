@@ -53,12 +53,12 @@ def write_log(out_path, data):
 def parse_args():
     p = argparse.ArgumentParser(description="Generate samples from uniform or zipf distribution using NumPy.")
     p.add_argument(
-        "distribution",
+        "--distribution",
         choices=["uniform", "zipf"],
         help="Distribution to sample from.",
     )
     p.add_argument(
-        "n",
+        "-n",
         help="Number of samples.",
     )
     p.add_argument(
@@ -109,7 +109,7 @@ def main():
         "file_number": args.file_number,
         "seed": seed,
     }
-    log_path = Path(args.out) / "log.json"
+    log_path = Path(args.out) / "dataset-info.json"
     write_log(log_path, log_data)
     return 0
 

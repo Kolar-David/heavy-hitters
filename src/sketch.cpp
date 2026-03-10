@@ -8,7 +8,7 @@
 void Sketch::loadInputFromFile() {
     std::ifstream fileInputStream(inputFilePath);
     if (!fileInputStream.is_open()) {
-        throw std::runtime_error("Unable to open: " + inputFilePath);
+        throw std::runtime_error(std::format(UNABLE_TO_OPEN, inputFilePath));
     }
     keyType x;
     while (fileInputStream >> x) {
@@ -20,15 +20,24 @@ void Sketch::storeCountsToFile() {
     counterType counter = storeCountsToCounter();
     std::ofstream out(outputFilePath, std::ios::out);
     if (!out) {
-        std::cerr << "Unable to open: " << outputFilePath << "\n";
+        throw std::runtime_error(std::format(UNABLE_TO_OPEN, outputFilePath))
     }
     for (auto val : counter) {
-        out << val.key << ' ' << val.counter << std::endl;
+        out << std::format(OUTPUT_FORMAT, val.key, val.counter) << std::endl;
     }
+}
+
+void Sketch::printMemoryAndTime(int memory, int time) {
+    std::cout << std::format(MEMORY_TIME, memory, time) << std::endl;
 }
 
 void Sketch::run() {
     // TODO timer
     loadInputFromFile();
     runSketch();
+    printMemoryAndTime(0, 0);
+}
+
+void checkNumberOfArguments(int argc, int correctNumberOfArguments) {
+    throw std::runtime_error(std::format(WRONG_NUMBER_OF_ARGUMENTS, correctNumberOfArguments));
 }

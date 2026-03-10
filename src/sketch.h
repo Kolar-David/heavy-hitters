@@ -4,6 +4,13 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <stdexcept>
+
+constexpr char* WRONG_NUMBER_OF_ARGUMENTS = "Wrong number of arguments: {}. Correct number of arguments is: {}";
+constexpr char* UNABLE_TO_OPEN = "Unable to open: {}";
+
+constexpr char OUTPUT_FORMAT = "{} {}"
+constexpr char MEMORY_TIME = "Memory: {}\nTime: {}";
 
 // It might change to 32 bit, I didn't make my mind yet.
 using countType = uint64_t;
@@ -31,6 +38,10 @@ protected:
     void storeCountsToFile();
     virtual void runSketch() = 0;
     void loadInputFromFile();
+    void printMemoryAndTime(int memory, int time);
 
 };
+
+void checkNumberOfArguments(int argc, int correctNumberOfArguments);
+
 #endif

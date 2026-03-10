@@ -33,3 +33,13 @@ void MisraGries::runSketch() {
         update(val);
     }
 }
+
+int main(int argc, char *argv[]) {
+    checkNumberOfArguments(argc, MISRA_NUMBER_OF_ARGUMENTS);
+    std::string inputFilePath = argv[1];
+    std::string outputFilePath = argv[2];
+    int k = atoi(argv[3]);
+    MisraGries sketch(k, inputFilePath, outputFilePath);
+    sketch.run();
+    return 0
+}

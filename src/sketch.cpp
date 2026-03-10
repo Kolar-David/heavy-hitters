@@ -20,7 +20,7 @@ void Sketch::storeCountsToFile() {
     counterType counter = storeCountsToCounter();
     std::ofstream out(outputFilePath, std::ios::out);
     if (!out) {
-        throw std::runtime_error(std::format(UNABLE_TO_OPEN, outputFilePath))
+        throw std::runtime_error(std::format(UNABLE_TO_OPEN, outputFilePath));
     }
     for (auto val : counter) {
         out << std::format(OUTPUT_FORMAT, val.key, val.counter) << std::endl;
@@ -36,8 +36,11 @@ void Sketch::run() {
     loadInputFromFile();
     runSketch();
     printMemoryAndTime(0, 0);
+    storeCountsToFile();
 }
 
 void checkNumberOfArguments(int argc, int correctNumberOfArguments) {
-    throw std::runtime_error(std::format(WRONG_NUMBER_OF_ARGUMENTS, correctNumberOfArguments));
+    if (argc != correctNumberOfArguments) {
+        throw std::runtime_error(std::format(WRONG_NUMBER_OF_ARGUMENTS, argc, correctNumberOfArguments));
+    }
 }

@@ -5,12 +5,13 @@
 #include <iostream>
 #include <vector>
 #include <stdexcept>
+#include <format>
 
-constexpr char* WRONG_NUMBER_OF_ARGUMENTS = "Wrong number of arguments: {}. Correct number of arguments is: {}";
-constexpr char* UNABLE_TO_OPEN = "Unable to open: {}";
+constexpr char WRONG_NUMBER_OF_ARGUMENTS[] = "Wrong number of arguments: {}. Correct number of arguments is: {}";
+constexpr char UNABLE_TO_OPEN[] = "Unable to open: {}";
 
-constexpr char OUTPUT_FORMAT = "{} {}"
-constexpr char MEMORY_TIME = "Memory: {}\nTime: {}";
+constexpr char OUTPUT_FORMAT[] = "{} {}";
+constexpr char MEMORY_TIME[] = "Memory: {}\nTime: {}";
 
 // It might change to 32 bit, I didn't make my mind yet.
 using countType = uint64_t;
@@ -18,18 +19,17 @@ using keyType = uint64_t;
 
 
 struct CounterBucket {
-    countType counter;
     keyType key;
+    countType counter;
 };
 
 using counterType = std::vector<CounterBucket>;
 
 class Sketch {
 public:
-    Sketch(std::string& inputFilePath, std::string& outputFilePath): inputFilePath(inputFilePath), outputFilePath(outputFilePath) {};
+    Sketch(const std::string& inputFilePath, const std::string& outputFilePath): inputFilePath(inputFilePath), outputFilePath(outputFilePath) {};
     virtual size_t size() = 0;
     void run();
-    counterType storeCountsToCounter() = 0;
 
 protected:
     std::string inputFilePath;
@@ -39,6 +39,7 @@ protected:
     virtual void runSketch() = 0;
     void loadInputFromFile();
     void printMemoryAndTime(int memory, int time);
+    virtual counterType storeCountsToCounter() = 0;
 
 };
 

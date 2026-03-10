@@ -4,17 +4,17 @@
 #include <string>
 #include <unordered_map>
 
-constexpr int MISRA_NUMBER_OF_ARGUMENTS = 3;
+constexpr int MISRA_NUMBER_OF_ARGUMENTS = 4;
 
 class MisraGries : public Sketch {
 public:
-    MisraGries(countType k, std::string& inputFilePath, std::string& outputFilePath);
+    MisraGries(const countType k, std::string& inputFilePath, const std::string& outputFilePath);
     size_t size() override;
-    void saveOutputToFile() override;
 private:
     countType k;
     std::unordered_map<keyType, countType> counter;
     void runSketch() override;
-    void update(countType val);
+    void update(keyType val);
+    counterType storeCountsToCounter() override;
 };
 #endif

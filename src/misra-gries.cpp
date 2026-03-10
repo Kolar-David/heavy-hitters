@@ -1,7 +1,8 @@
 #include "misra-gries.h"
+#include "sketch.h"
 #include <vector>
 
-MisraGries::MisraGries(countType k, std::string &inputFilePath, std::string &outputFilePath): k(k), Sketch(inputFilePath, outputFilePath) {}
+MisraGries::MisraGries(const countType k, std::string &inputFilePath, const std::string &outputFilePath): Sketch(inputFilePath, outputFilePath), k(k) {}
 
 size_t MisraGries::size() {
     //TODO
@@ -34,12 +35,20 @@ void MisraGries::runSketch() {
     }
 }
 
+counterType MisraGries::storeCountsToCounter() {
+    counterType outputCounter;
+    for (auto& [key, value] : counter) {
+        outputCounter.push_back({key, value});
+    }
+    return outputCounter;
+}
+
 int main(int argc, char *argv[]) {
     checkNumberOfArguments(argc, MISRA_NUMBER_OF_ARGUMENTS);
     std::string inputFilePath = argv[1];
     std::string outputFilePath = argv[2];
-    int k = atoi(argv[3]);
-    MisraGries sketch(k, inputFilePath, outputFilePath);
-    sketch.run();
-    return 0
+    int k = std::stoull(argv[3]);
+    MisraGries misra(k, inputFilePath, outputFilePath);
+    misra.run();
+    return 0;
 }

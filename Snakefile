@@ -1,22 +1,34 @@
 configfile: "config.yaml"
 
-SET_NAMES = list(config["datasets"].keys())
+DATASET_NAMES = list(config["datasets"].keys())
+ALGORITHMS = ["misra-gries"]
 
 
 rule all:
     input:
-        expand("datasets/{setname}", setname=SET_NAMES)
+        expand("datasets/{datasetname}", datasetname=DATASET_NAMES),
+        expand("build/{alg}", alg=ALGORITHMS)
 
-
+rule build_algorithms:
+    input:
+        src="src/{alg}.cpp"
+    output:
+        exe="build/{alg}"
+    shell:
+        r"""
+        mkdir -p build
+        g++ -O3 -std=c++20 {input.src} src/sketch.cpp -o {output.exe}
+        """
+        
 rule generate_dataset:
     output:
-        outdir=directory("datasets/{setname}")
+        outdir=directory("datasets/{datasetname}")
     params:
-        distribution=lambda wc: config["datasets"][wc.setname]["distribution"],
-        seed=lambda wc: config["datasets"][wc.setname]["seed"],
-        file_number=lambda wc: config["datasets"][wc.setname]["file_number"],
-        n=lambda wc: config["datasets"][wc.setname]["n"],
-        param=lambda wc: config["datasets"][wc.setname]["param"]
+        distribution=lambda wc: config["datasets"][wc.datasetname]["distribution"],
+        seed=lambda wc: config["datasets"][wc.datasetname]["seed"],
+        file_number=lambda wc: config["datasets"][wc.datasetname]["file_number"],
+        n=lambda wc: config["datasets"][wc.datasetname]["n"],
+        param=lambda wc: config["datasets"][wc.datasetname]["param"]
     shell:
         r"""
         scripts/generator.py \

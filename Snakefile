@@ -21,6 +21,8 @@ rule build_algorithms:
         """
         
 rule generate_dataset:
+    input:
+        generator="scripts/generator.py"
     output:
         outdir=directory("datasets/{datasetname}")
     params:
@@ -31,7 +33,7 @@ rule generate_dataset:
         param=lambda wc: config["datasets"][wc.datasetname]["param"]
     shell:
         r"""
-        scripts/generator.py \
+        {generator} \
             --distribution {params.distribution} \
             -n {params.n} \
             --param {params.param} \

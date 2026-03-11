@@ -109,7 +109,8 @@ def main():
         "file_number": args.file_number,
         "seed": seed,
     }
-    log_path = Path(args.out) / "dataset-info.json"
+    outpath = Path(args.out)
+    log_path = outpath / f"{outpath.name}.json"
     write_log(log_path, log_data)
     return 0
 

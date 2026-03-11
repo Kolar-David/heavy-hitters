@@ -1,3 +1,4 @@
+# DATASETS
 datasets:
   zipf_small:
     distribution: zipf
@@ -5,3 +6,17 @@ datasets:
     file_number: 3
     seed: 123
     param: 1.1
+    
+# INSTANCES (ALGORITHMS WITH SPECIFIED PARAMETERS)
+instances:
+  misra_k_10:
+    binary: misra-gries
+    k: 10
+    
+    
+# EXPERIMENTS (DETERMINED BY DATASETS AND INSTANCES)
+
+experiments:
+  hello_world:
+    instances: [misra_k_10]
+    datasets: [zipf_small]

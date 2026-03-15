@@ -67,7 +67,7 @@ def parse_args():
         help="Distribution parameter.",
     )
     p.add_argument(
-        "--out",
+        "--output",
         default="./outputs",
         help="Output directory path where files will be saved.",
     )
@@ -86,7 +86,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    check_if_directory_is_empty(Path(args.out))
+    check_if_directory_is_empty(Path(args.output))
     seed = generate_seed_if_missing(args.seed)
     random_generator = np.random.default_rng(seed)
     if args.distribution == "uniform":
@@ -98,7 +98,7 @@ def main():
 
     for i in range(int(args.file_number)):
         data = sample(args.distribution, param, args.n, random_generator)
-        out_path = Path(args.out) / f"{i}_{args.distribution}_{param_file_name}"
+        out_path = Path(args.output) / f"{i}_{args.distribution}_{param_file_name}"
         write_numbers(out_path, data)
     log_data = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -109,7 +109,7 @@ def main():
         "file_number": args.file_number,
         "seed": seed,
     }
-    outpath = Path(args.out)
+    outpath = Path(args.output)
     log_path = outpath / f"{outpath.name}.json"
     write_log(log_path, log_data)
     return 0

@@ -47,7 +47,8 @@ int main(int argc, char *argv[]) {
     checkNumberOfArguments(argc, MISRA_NUMBER_OF_ARGUMENTS);
     std::string inputFilePath = argv[1];
     std::string outputFilePath = argv[2];
-    int k = std::stoull(argv[3]);
+    int seed = std::stoull(argv[3]);
+    int k = std::stoull(argv[4]);
     MisraGries misra(k, inputFilePath, outputFilePath);
     misra.run();
     return 0;

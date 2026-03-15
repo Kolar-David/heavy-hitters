@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-constexpr int MISRA_NUMBER_OF_ARGUMENTS = 4;
+constexpr int MISRA_NUMBER_OF_ARGUMENTS = 5;
 
 class MisraGries : public Sketch {
 public:

@@ -7,14 +7,17 @@ def parse_args():
     p = argparse.ArgumentParser(description="Run algorithm on selected inputs and store outputs")
     p.add_argument(
         "--binary",
+        required=True,
         help="Path to compiled algorithm",
     )
     p.add_argument(
         "--input",
+        required=True,
         help="Path to inputs",
     )
     p.add_argument(
         "--output",
+        required=True,
         help="Path to directory where output files will be saved.",
     )
     p.add_argument(
@@ -24,6 +27,7 @@ def parse_args():
     )
     p.add_argument(
         "--seed",
+        required=True,
         help="Seed",
     )
     return p.parse_args()

@@ -54,11 +54,13 @@ def parse_args():
     p = argparse.ArgumentParser(description="Generate samples from uniform or zipf distribution using NumPy.")
     p.add_argument(
         "--distribution",
+        required=True,
         choices=["uniform", "zipf"],
         help="Distribution to sample from.",
     )
     p.add_argument(
         "-n",
+        required=True,
         help="Number of samples.",
     )
     p.add_argument(

@@ -19,4 +19,4 @@ experiments:
   hello_world:
     instances: [misra_k_10]
     datasets: [zipf_small]
-    seeds: [10]
+    seeds: [10, 11]

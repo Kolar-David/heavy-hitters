@@ -5,3 +5,6 @@
 /build
 /.snakemake-env/
 /evaluations
+/metrics
+/venv
+/.venv

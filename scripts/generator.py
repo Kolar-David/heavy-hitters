@@ -113,7 +113,7 @@ def main():
     }
     outpath = Path(args.output)
     log_path = outpath / f"{outpath.name}.json"
-    write_log(log_path, log_data)
+    #write_log(log_path, log_data)
     return 0
 
 

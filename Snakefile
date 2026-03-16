@@ -23,6 +23,22 @@ def all_evaluation_targets():
 
     return sorted(set(targets))
 
+def all_metric_targets():
+    targets = []
+
+    for exp_name, exp_cfg in config["experiments"].items():
+        targets.extend(
+            expand(
+                "metrics/{experiment}/{instance}/{datasetname}/seed_{seed}.json",
+                experiment=[exp_name],
+                instance=exp_cfg["instances"],
+                datasetname=exp_cfg["datasets"],
+                seed=exp_cfg["seeds"],
+            )
+        )
+
+    return sorted(set(targets))
+
 # Lists
 
 DATASET_NAMES = list(config["datasets"].keys())
@@ -32,9 +48,27 @@ ALGORITHMS = ["misra-gries"]
 
 rule all:
     input:
-        all_evaluation_targets(),
+        all_metric_targets(),
         #expand("datasets/{datasetname}", datasetname=DATASET_NAMES),
         #expand("build/{alg}", alg=ALGORITHMS),
+
+rule compute_metrics:
+    input:
+        evaluation=directory("evaluations/{instance}/{datasetname}/seed_{seed}"),
+        dataset=directory("datasets/{datasetname}"),
+        metrics="scripts/metrics.py"
+    output:
+        "metrics/{experiment}/{instance}/{datasetname}/seed_{seed}.json"
+    params:
+        k=lambda wc: config["experiments"][wc.experiment]["k"]
+    shell:
+        r"""
+        {input.metrics} \
+            --dataset {input.dataset:q} \
+            --solutions {input.evaluation:q} \
+            --output {output:q} \
+            -k {params.k}
+        """
 
 rule build_algorithms:
     input:

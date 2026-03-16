@@ -11,7 +11,7 @@ datasets:
 instances:
   misra_k_10:
     binary: misra-gries
-    params: [10]
+    params: [5]
     
     
 # EXPERIMENTS (DETERMINED BY DATASETS AND INSTANCES) 
@@ -20,3 +20,4 @@ experiments:
     instances: [misra_k_10]
     datasets: [zipf_small]
     seeds: [10, 11]
+    k: 5

@@ -2,7 +2,7 @@
 
 ## Things to do
 
-- check if pipeline really works and is eficient
+- check if pipeline really works and is efficient
 
 ## Features to add:
 

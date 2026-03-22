@@ -98,7 +98,11 @@ def main():
     output_path.parent.mkdir(parents=True, exist_ok=True)
     dict_with_metrics = {}
     for input_file_path in dataset_path.iterdir():
-        solution_file_path = solutions_path / input_file_path.name
+        if (not input_file_path.is_file()):
+            continue
+        if (input_file_path.suffix != ".in"):
+            continue
+        solution_file_path = (solutions_path / input_file_path.stem).with_suffix(".out")
         if not solution_file_path.is_file():
             raise ValueError(f"File {solution_file_path} with a solution of {input_file_path} is missing!")
         metrics = compute_metrics(input_file_path, solution_file_path, args.k)

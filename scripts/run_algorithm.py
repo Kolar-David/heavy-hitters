@@ -39,7 +39,7 @@ def main():
     output_path.mkdir(parents=True, exist_ok=True)
     for p in input_path.iterdir():
         if p.is_file() and p.suffix.lower() != ".json":
-            output_file_path = output_path / p.name
+            output_file_path = (output_path / p.stem).with_suffix(".out")
             subprocess.run([args.binary, str(p), str(output_file_path), str(args.seed), *args.params])
     return 0
 

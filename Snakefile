@@ -29,10 +29,11 @@ def all_metric_targets():
     for exp_name, exp_cfg in config["experiments"].items():
         targets.extend(
             expand(
-                "metrics/{experiment}/{instance}/{datasetname}/seed_{seed}.json",
+                "metrics/{experiment}/{instance}/{datasetname}/{k}/seed_{seed}.json",
                 experiment=[exp_name],
                 instance=exp_cfg["instances"],
                 datasetname=exp_cfg["datasets"],
+                k=exp_cfg["k"],
                 seed=exp_cfg["seeds"],
             )
         )
@@ -58,16 +59,14 @@ rule compute_metrics:
         dataset=directory("datasets/{datasetname}"),
         metrics="scripts/metrics.py"
     output:
-        "metrics/{experiment}/{instance}/{datasetname}/seed_{seed}.json"
-    params:
-        k=lambda wc: config["experiments"][wc.experiment]["k"]
+        "metrics/{experiment}/{instance}/{datasetname}/{k}/seed_{seed}.json"
     shell:
         r"""
         {input.metrics} \
             --dataset {input.dataset:q} \
             --solutions {input.evaluation:q} \
             --output {output:q} \
-            -k {params.k}
+            -k {wildcards.k}
         """
 
 rule build_algorithms:
@@ -78,7 +77,7 @@ rule build_algorithms:
     shell:
         r"""
         mkdir -p build
-        g++-13 -O3 -std=c++20 {input.src} src/sketch.cpp -o {output.exe}
+        g++ -O3 -std=c++20 {input.src} src/sketch.cpp -o {output.exe}
         """
 
 rule run_algorithm:

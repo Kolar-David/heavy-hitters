@@ -100,7 +100,7 @@ def main():
 
     for i in range(int(args.file_number)):
         data = sample(args.distribution, param, args.n, random_generator)
-        out_path = Path(args.output) / f"{i}_{args.distribution}_{param_file_name}"
+        out_path = Path(args.output) / f"{i}_{args.distribution}_{param_file_name}.in"
         write_numbers(out_path, data)
     log_data = {
         "timestamp": datetime.now(timezone.utc).isoformat(),

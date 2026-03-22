@@ -15,6 +15,7 @@ instances:
     
     
 # EXPERIMENTS (DETERMINED BY DATASETS AND INSTANCES) 
+# Parameter k is for metrics only
 experiments:
   hello_world:
     instances: [misra_k_10]

@@ -50,6 +50,7 @@ ALGORITHMS = ["misra-gries"]
 rule all:
     input:
         all_metric_targets(),
+        "other-experiments/unbiasedness/result.txt"
         #expand("datasets/{datasetname}", datasetname=DATASET_NAMES),
         #expand("build/{alg}", alg=ALGORITHMS),
 
@@ -114,4 +115,11 @@ rule generate_dataset:
             --output {output.outdir}
         """
 
+rule unbiasedness:
+    input:
+        script="other-experiments/unbiasedness/script.py"
+    output:
+        output_file = "other-experiments/unbiasedness/result.txt"
+    shell:
+        r"""{input.script} > {output.output_file}"""
 

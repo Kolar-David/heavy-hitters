@@ -4,11 +4,13 @@ configfile: "config.yaml"
 
 # Functions
 
+# Convert instance parameters from config to a CLI argument string
 def cli_params_for_instance(wc):
     params = config["instances"][wc.instance]["params"]
     params = [str(val) for val in params]
     return " ".join(params)
 
+# Collect all algorithm evaluation targets required by experiments
 def all_evaluation_targets():
     targets = []
     for exp_name, exp_cfg in config["experiments"].items():
@@ -23,6 +25,7 @@ def all_evaluation_targets():
 
     return sorted(set(targets))
 
+# Collect all unique metric files required by experiments
 def all_metric_targets():
     targets = []
 
@@ -40,8 +43,7 @@ def all_metric_targets():
 
     return sorted(set(targets))
 
-# Lists
-
+# Lists for explicit dataset/build targets
 DATASET_NAMES = list(config["datasets"].keys())
 ALGORITHMS = ["misra-gries"]
 

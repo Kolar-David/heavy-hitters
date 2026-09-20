@@ -1,3 +1,6 @@
+# imports
+import glob
+
 # Config
 
 configfile: "config.yaml"
@@ -72,28 +75,43 @@ rule compute_metrics:
             -k {wildcards.k}
         """
 
-rule build_algorithms:
+CPP_SOURCES = glob.glob("src/**/*.cpp", recursive=True)
+CPP_HEADERS = glob.glob("src/**/*.h", recursive=True)
+
+# Build the common sketch runner using CMake
+rule build_runner:
     input:
-        src="src/{alg}.cpp"
+        "CMakeLists.txt",
+        CPP_SOURCES,
+        CPP_HEADERS
     output:
-        exe="build/{alg}"
+        exe="build/summary-runner"
     shell:
         r"""
-        mkdir -p build
-        g++ -O3 -std=c++20 {input.src} src/sketch.cpp -o {output.exe}
+        cmake -S . -B build -G Ninja
+        cmake --build build --target summary-runner
         """
 
 rule run_algorithm:
     input:
         run_script="scripts/run_algorithm.py",
-        exe=lambda wc: f"build/{config['instances'][wc.instance]['binary']}",
+        runner="build/summary-runner",
         dataset="datasets/{datasetname}"
     output:
         outdir=directory("evaluations/{instance}/{datasetname}/seed_{seed}")
     params:
-        cli_args=cli_params_for_instance,
+        algorithm=lambda wc: config["instances"][wc.instance]["algorithm"],
+        cli_args=cli_params_for_instance
     shell:
-        r"""scripts/run_algorithm.py --binary {input.exe:q} --input {input.dataset:q} --output {output.outdir} --params {params.cli_args} --seed {wildcards.seed}"""
+        r"""
+        {input.run_script} \
+            --binary {input.runner:q} \
+            --algorithm {params.algorithm} \
+            --input {input.dataset:q} \
+            --output {output.outdir:q} \
+            --params {params.cli_args} \
+            --seed {wildcards.seed}
+        """
 
 rule generate_dataset:
     input:

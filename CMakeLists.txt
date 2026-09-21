@@ -1,16 +1,22 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(heavy_hitters LANGUAGES CXX)
+project(stream_summaries LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(misra-gries
-    src/misra-gries.cpp
-    src/sketch.cpp
+add_executable(summary-runner
+    src/main.cpp
+    src/runner.cpp
+    src/arguments.cpp
+    src/io.cpp
+    src/summary_factory.cpp
+
+    src/summaries/misra_gries.cpp
 )
 
-target_include_directories(misra-gries PRIVATE
+target_include_directories(summary-runner PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+

@@ -1,47 +1,83 @@
 #!/usr/bin/env python3
+import argparse
 import subprocess
 from pathlib import Path
-import argparse
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Run algorithm on selected inputs and store outputs")
-    p.add_argument(
+    parser = argparse.ArgumentParser(
+        description="Run a summary on selected inputs and store outputs"
+    )
+
+    parser.add_argument(
         "--binary",
         required=True,
-        help="Path to compiled algorithm",
+        help="Path to the compiled summary runner",
     )
-    p.add_argument(
+    parser.add_argument(
+        "--summary",
+        required=True,
+        help="Name of the summary to run",
+    )
+    parser.add_argument(
         "--input",
         required=True,
-        help="Path to inputs",
+        help="Path to the input directory",
     )
-    p.add_argument(
+    parser.add_argument(
         "--output",
         required=True,
-        help="Path to directory where output files will be saved.",
+        help="Path to the directory where output files will be saved",
     )
-    p.add_argument(
+    parser.add_argument(
         "--params",
-        nargs='+',
-        help="List of parameters for algorithm",
+        nargs="*",
+        default=[],
+        help="Summary-specific parameters",
     )
-    p.add_argument(
+    parser.add_argument(
         "--seed",
         required=True,
         help="Seed",
     )
-    return p.parse_args()
+    parser.add_argument(
+        "--top-k",
+        action="store_true",
+        help="Include top-k output if supported by the summary",
+    )
+
+    return parser.parse_args()
+
+def parse_statistics(output):
+    statistics = {}
+    for line in output.splitlines():
+        name, value = line.split(":", maxsplit=1)
+        statistics[name.strip()] = int(value.strip())
+    return {"update_time_ns": statistics["UpdateTimeNS"], "query_time_ns": statistics["QueryTimeNS"], "memory": statistics["Memory"]}
+
+
+def save_statistics(statistics, output_path):
+    statistics_path = output_path / "statistics.json"
+    with statistics_path.open("w") as file:
+        json.dump(statistics, file, indent=4)
 
 def main():
     args = parse_args()
     input_path = Path(args.input)
     output_path = Path(args.output)
     output_path.mkdir(parents=True, exist_ok=True)
-    for p in input_path.iterdir():
-        if p.is_file() and p.suffix.lower() != ".json":
-            output_file_path = (output_path / p.stem).with_suffix(".out")
-            subprocess.run([args.binary, str(p), str(output_file_path), str(args.seed), *args.params])
+    for input_file in input_path.iterdir():
+        statistics = {}
+        if not input_file.is_file() or input_file.suffix.lower() == ".json":
+            continue
+        output_file = (output_path / input_file.stem).with_suffix(".out")
+        command = [args.binary, args.summary, str(input_file), str(output_file), str(args.seed), *args.params,]
+        if args.top_k:
+            command.append("--top-k")
+        result = subprocess.run(command, check=True)
+        statistics[input_file.stem] = parse_statistics(result.stdout)
+    save_statistics(statistics, output_path)
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

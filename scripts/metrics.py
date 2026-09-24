@@ -55,6 +55,28 @@ def get_top_k_from_solution(solution_path, k):
         raise ValueError(f"file {solution_path} contains more than {k} heavy hitters!")
     return set(counter.keys())
 
+def get_top_k_from_solution(solution_path, k):
+    counter = {}
+    reading_top_k = False
+    with open(solution_path, "r") as file:
+        for line in file:
+            line = line.strip()
+            if line == "[top_k]":
+                reading_top_k = True
+                continue
+            if line.startswith("["):
+                reading_top_k = False
+                continue
+            if not reading_top_k or not line:
+                continue
+            key, count = [int(val) for val in line.split()]
+            counter[key] = count
+    if not counter:
+        raise ValueError(f"File {solution_path} does not contain a top-k section!")
+    if len(counter) > k:
+        raise ValueError(f"File {solution_path} contains more than {k} heavy hitters!")
+    return set(counter.keys())
+
 
 def compute_metrics(input_path, solution_path, k):
     top_k_real_vals = compute_top_k_hitters(input_path, k)

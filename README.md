@@ -5,7 +5,9 @@ This project contains a pipeline based on Snakemake for evaluating various heavy
 ## Requirements
 
 1. Python modules listed in `requirements.txt` (namely Snakemake)
-2. g++ with support for C++20+
+2. C++20-compatible compiler
+3. CMake 3.16.3 or newer
+4. Ninja
 
 ## Usage
 

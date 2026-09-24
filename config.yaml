@@ -2,8 +2,8 @@
 datasets:
   zipf_small:
     distribution: zipf
-    n: 20
-    file_number: 3
+    n: 1000
+    file_number: 100
     seed: 123
     param: 1.1
 
@@ -12,12 +12,15 @@ instances:
   misra_capacity_5:
     summary: misra-gries
     params: [5]
+  misra_capacity_30:
+    summary: misra-gries
+    params: [30]
 
 # EXPERIMENTS (DETERMINED BY DATASETS AND INSTANCES)
 # Parameter k determines the requested top-k output and metrics.
 experiments:
   hello_world:
-    instances: [misra_capacity_5]
+    instances: [misra_capacity_5, misra_capacity_30]
     datasets: [zipf_small]
     seeds: [10, 11]
     k: 5

@@ -1,4 +1,5 @@
-# imports
+# Imports
+
 import glob
 
 # Config
@@ -13,20 +14,22 @@ def cli_params_for_instance(wc):
     params = [str(val) for val in params]
     return " ".join(params)
 
-# Collect all algorithm evaluation targets required by experiments
+# Collect all summary evaluation targets required by experiments
 def all_evaluation_targets():
     targets = []
+
     for exp_name, exp_cfg in config["experiments"].items():
         targets.extend(
             expand(
-                "evaluations/{instance}/{datasetname}/seed_{seed}",
+                "evaluations/{instance}/{datasetname}/{k}/seed_{seed}",
                 instance=exp_cfg["instances"],
                 datasetname=exp_cfg["datasets"],
+                k=exp_cfg["k"],
                 seed=exp_cfg["seeds"],
             )
         )
-
     return sorted(set(targets))
+
 
 # Collect all unique metric files required by experiments
 def all_metric_targets():
@@ -46,9 +49,8 @@ def all_metric_targets():
 
     return sorted(set(targets))
 
-# Lists for explicit dataset/build targets
-DATASET_NAMES = list(config["datasets"].keys())
-ALGORITHMS = ["misra-gries"]
+CPP_SOURCES = glob.glob("src/**/*.cpp", recursive=True)
+CPP_HEADERS = glob.glob("src/**/*.h", recursive=True)
 
 # Rules
 
@@ -56,12 +58,13 @@ rule all:
     input:
         all_metric_targets(),
         "other-experiments/unbiasedness/result.txt"
-        #expand("datasets/{datasetname}", datasetname=DATASET_NAMES),
-        #expand("build/{alg}", alg=ALGORITHMS),
+
 
 rule compute_metrics:
     input:
-        evaluation=directory("evaluations/{instance}/{datasetname}/seed_{seed}"),
+        evaluation=directory(
+            "evaluations/{instance}/{datasetname}/{k}/seed_{seed}"
+        ),
         dataset=directory("datasets/{datasetname}"),
         metrics="scripts/metrics.py"
     output:
@@ -75,10 +78,7 @@ rule compute_metrics:
             -k {wildcards.k}
         """
 
-CPP_SOURCES = glob.glob("src/**/*.cpp", recursive=True)
-CPP_HEADERS = glob.glob("src/**/*.h", recursive=True)
-
-# Build the common sketch runner using CMake
+# Build the common summary runner using CMake
 rule build_runner:
     input:
         "CMakeLists.txt",
@@ -92,25 +92,29 @@ rule build_runner:
         cmake --build build --target summary-runner
         """
 
+
 rule run_algorithm:
     input:
         run_script="scripts/run_algorithm.py",
         runner="build/summary-runner",
         dataset="datasets/{datasetname}"
     output:
-        outdir=directory("evaluations/{instance}/{datasetname}/seed_{seed}")
+        outdir=directory(
+            "evaluations/{instance}/{datasetname}/{k}/seed_{seed}"
+        )
     params:
-        algorithm=lambda wc: config["instances"][wc.instance]["algorithm"],
+        summary=lambda wc: config["instances"][wc.instance]["summary"],
         cli_args=cli_params_for_instance
     shell:
         r"""
         {input.run_script} \
             --binary {input.runner:q} \
-            --algorithm {params.algorithm} \
+            --summary {params.summary} \
             --input {input.dataset:q} \
             --output {output.outdir:q} \
             --params {params.cli_args} \
-            --seed {wildcards.seed}
+            --seed {wildcards.seed} \
+            --top-k {wildcards.k}
         """
 
 rule generate_dataset:
@@ -135,11 +139,11 @@ rule generate_dataset:
             --output {output.outdir}
         """
 
+
 rule unbiasedness:
     input:
         script="other-experiments/unbiasedness/script.py"
     output:
-        output_file = "other-experiments/unbiasedness/result.txt"
+        output_file="other-experiments/unbiasedness/result.txt"
     shell:
         r"""{input.script} > {output.output_file}"""
-

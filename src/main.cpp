@@ -6,6 +6,7 @@
 #include <exception>
 #include <iostream>
 #include <optional>
+#include <stdexcept>
 
 constexpr char SELECTED_SUMMARY_DOES_NOT_SUPPORT_TOP_K[] = "The selected summary does not support top-k output!";
 
@@ -14,14 +15,18 @@ int main(int argc, char* argv[]) {
         const ProgramOptions options = parseArguments(argc, argv);
         const std::vector<Key> input = loadInput(options.inputPath);
         std::unique_ptr<Summary> summary = createSummary(options);
-        Runner runner;
-        const RunResult result = runner.run(*summary, input);
-        std::optional<std::vector<Estimate>> topK;
-        if (options.outputTopK) {
-            const auto* topKSummary = dynamic_cast<const TopKSummary*>(summary.get());
+        TopKSummary* topKSummary = nullptr;
+        if (options.topK) {
+            topKSummary = dynamic_cast<TopKSummary*>(summary.get());
             if (topKSummary == nullptr) {
                 throw std::runtime_error(SELECTED_SUMMARY_DOES_NOT_SUPPORT_TOP_K);
             }
+            topKSummary->setK(*options.topK);
+        }
+        Runner runner;
+        const RunResult result = runner.run(*summary, input);
+        std::optional<std::vector<Estimate>> topK;
+        if (topKSummary != nullptr) {
             topK = topKSummary->topK();
         }
         writeOutput(result.estimates, topK, options.outputPath);

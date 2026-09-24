@@ -6,19 +6,18 @@ datasets:
     file_number: 3
     seed: 123
     param: 1.1
-    
-# INSTANCES (ALGORITHMS WITH SPECIFIED PARAMETERS)
+
+# INSTANCES (SUMMARIES WITH SPECIFIED INTERNAL PARAMETERS)
 instances:
-  misra_k_10:
-    binary: misra-gries
+  misra_capacity_5:
+    summary: misra-gries
     params: [5]
-    
-    
-# EXPERIMENTS (DETERMINED BY DATASETS AND INSTANCES) 
-# Parameter k is for metrics only
+
+# EXPERIMENTS (DETERMINED BY DATASETS AND INSTANCES)
+# Parameter k determines the requested top-k output and metrics.
 experiments:
   hello_world:
-    instances: [misra_k_10]
+    instances: [misra_capacity_5]
     datasets: [zipf_small]
     seeds: [10, 11]
     k: 5

@@ -1,4 +1,4 @@
-#include "misra_gries.h"
+#include "misra-gries.h"
 #include <algorithm>
 #include <stdexcept>
 #include <unordered_map>
@@ -9,11 +9,17 @@ namespace Exceptions {
     constexpr char CAPACITY_GREATER_TOP_K[] = "Top-k parameter cannot be greater than Misra-Gries capacity!";
 }
 
-MisraGries::MisraGries(std::size_t k, std::size_t capacity): TopKSummary(k), _capacity(capacity) {
+
+
+MisraGries::MisraGries(std::size_t capacity) : capacity(capacity) {
     if (capacity == 0) {
         throw std::invalid_argument(Exceptions::CAPACITY_MUST_BE_POSITIVE);
     }
-    if (k > capacity) {
+}
+
+
+void MisraGries::checkK(std::size_t value) const {
+    if (value > capacity) {
         throw std::invalid_argument(Exceptions::CAPACITY_GREATER_TOP_K);
     }
 }
@@ -45,6 +51,7 @@ Count MisraGries::query(Key key) const {
 }
 
 std::vector<Estimate> MisraGries::topK() const {
+    const std::size_t k = getK();
     std::vector<Estimate> estimates;
     estimates.reserve(counters.size());
     for (const auto& [key, count] : counters) {

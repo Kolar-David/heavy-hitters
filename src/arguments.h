@@ -12,7 +12,7 @@ struct ProgramOptions {
     std::filesystem::path outputPath;
     std::uint64_t seed;
     std::vector<std::string> summaryArguments;
-    bool outputTopK = false;
+    std::optional<std::size_t> topK;
 };
 
 ProgramOptions parseArguments(int argc, char* argv[]);

@@ -14,6 +14,7 @@ add_executable(summary-runner
     src/summary_factory.cpp
 
     src/summaries/misra_gries.cpp
+        src/estimate.h
 )
 
 target_include_directories(summary-runner PRIVATE

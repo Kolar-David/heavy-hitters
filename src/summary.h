@@ -1,11 +1,14 @@
 #ifndef SUMMARY_H
 #define SUMMARY_H
-
 #include <cstddef>
 #include <cstdint>
-
 using Key = std::uint64_t;
 using Count = std::uint64_t;
+
+struct Estimate {
+    Key key;
+    Count estimate;
+};
 
 class Summary {
 public:

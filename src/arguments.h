@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <optional>
 
 struct ProgramOptions {
     std::string summaryName;
@@ -11,6 +12,7 @@ struct ProgramOptions {
     std::filesystem::path outputPath;
     std::uint64_t seed;
     std::vector<std::string> summaryArguments;
+    bool outputTopK = false;
 };
 
 ProgramOptions parseArguments(int argc, char* argv[]);

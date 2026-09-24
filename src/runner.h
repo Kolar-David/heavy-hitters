@@ -1,15 +1,9 @@
 #ifndef RUNNER_H
 #define RUNNER_H
-
 #include "summary.h"
 #include <chrono>
 #include <cstddef>
 #include <vector>
-
-struct Estimate {
-    Key key;
-    Count estimate;
-};
 
 struct RunResult {
     std::chrono::nanoseconds updateTime;

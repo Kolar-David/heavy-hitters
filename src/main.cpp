@@ -2,8 +2,12 @@
 #include "io.h"
 #include "runner.h"
 #include "summary_factory.h"
+#include "top_k_summary.h"
 #include <exception>
 #include <iostream>
+#include <optional>
+
+constexpr char SELECTED_SUMMARY_DOES_NOT_SUPPORT_TOP_K[] = "The selected summary does not support top-k output!";
 
 int main(int argc, char* argv[]) {
     try {
@@ -12,7 +16,15 @@ int main(int argc, char* argv[]) {
         std::unique_ptr<Summary> summary = createSummary(options);
         Runner runner;
         const RunResult result = runner.run(*summary, input);
-        writeEstimates(result.estimates, options.outputPath);
+        std::optional<std::vector<Estimate>> topK;
+        if (options.outputTopK) {
+            const auto* topKSummary = dynamic_cast<const TopKSummary*>(summary.get());
+            if (topKSummary == nullptr) {
+                throw std::runtime_error(SELECTED_SUMMARY_DOES_NOT_SUPPORT_TOP_K);
+            }
+            topK = topKSummary->topK();
+        }
+        writeOutput(result.estimates, topK, options.outputPath);
         printStatistics(result);
         return 0;
     }

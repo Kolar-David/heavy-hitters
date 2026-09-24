@@ -1,20 +1,21 @@
 #ifndef MISRA_GRIES_H
 #define MISRA_GRIES_H
-#include "sketch.h"
-#include <string>
+#include "../top_k_summary.h"
+#include <cstddef>
 #include <unordered_map>
+#include <vector>
 
-constexpr int MISRA_NUMBER_OF_ARGUMENTS = 5;
-
-class MisraGries : public Sketch {
+class MisraGries : public TopKSummary {
 public:
-    MisraGries(const countType k, std::string& inputFilePath, const std::string& outputFilePath);
-    size_t size() override;
+    MisraGries(std::size_t k, std::size_t capacity);
+    void update(Key key) override;
+    Count query(Key key) const override;
+    std::size_t memoryUsage() const override;
+    std::vector<Estimate> topK() const override;
+
 private:
-    countType k;
-    std::unordered_map<keyType, countType> counter;
-    void runSketch() override;
-    void update(keyType val);
-    counterType storeCountsToCounter() override;
+    const std::size_t _capacity;
+    std::unordered_map<Key, Count> _counters;
 };
+
 #endif

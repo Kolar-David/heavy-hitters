@@ -10,3 +10,4 @@
 /.venv
 /other-experiments/unbiasedness/result.txt
 /.idea/
+/cmake-build-debug

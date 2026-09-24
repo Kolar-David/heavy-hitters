@@ -1,55 +1,67 @@
-#include "misra-gries.h"
-#include "sketch.h"
+#include "misra_gries.h"
+#include <algorithm>
+#include <stdexcept>
+#include <unordered_map>
 #include <vector>
 
-MisraGries::MisraGries(const countType k, std::string &inputFilePath, const std::string &outputFilePath): Sketch(inputFilePath, outputFilePath), k(k) {}
-
-size_t MisraGries::size() {
-    //TODO
-    return 0;
+namespace Exceptions {
+    constexpr char CAPACITY_MUST_BE_POSITIVE[] = "Misra-Gries capacity must be positive!";
+    constexpr char CAPACITY_GREATER_TOP_K[] = "Top-k parameter cannot be greater than Misra-Gries capacity!";
 }
 
-void MisraGries::update(keyType value) {
-    if (counter.find(value) != counter.end()) {
-        ++counter[value];
+MisraGries::MisraGries(std::size_t k, std::size_t capacity): TopKSummary(k), _capacity(capacity) {
+    if (capacity == 0) {
+        throw std::invalid_argument(Exceptions::CAPACITY_MUST_BE_POSITIVE);
     }
-    else {
-        if (counter.size() < k) {
-            counter[value] = 1;
+    if (k > capacity) {
+        throw std::invalid_argument(Exceptions::CAPACITY_GREATER_TOP_K);
+    }
+}
+
+void MisraGries::update(Key key) {
+    auto it = counters.find(key);
+    if (it != counters.end()) {
+        ++it->second;
+        return;
+    }
+    if (counters.size() < capacity) {
+        counters[key] = 1;
+        return;
+    }
+    for (auto& [storedKey, count] : counters) {
+        --count;
+    }
+    std::erase_if(counters, [](const auto& entry) {
+        return entry.second == 0;
+    });
+}
+
+Count MisraGries::query(Key key) const {
+    const auto it = counters.find(key);
+    if (it == counters.end()) {
+        return 0;
+    }
+    return it->second;
+}
+
+std::vector<Estimate> MisraGries::topK() const {
+    std::vector<Estimate> estimates;
+    estimates.reserve(counters.size());
+    for (const auto& [key, count] : counters) {
+        estimates.push_back({key, count});
+    }
+    std::sort(estimates.begin(), estimates.end(),
+        [](const Estimate& first, const Estimate& second) {
+            return first.estimate > second.estimate;
         }
-        else {
-            for (auto& [key, value] : counter) {
-                --value;
-            }
-            std::erase_if(counter, [](auto const& kv) {
-                return kv.second == 0;
-            });
-
-        }
+    );
+    if (estimates.size() > k) {
+        estimates.resize(k);
     }
+    return estimates;
 }
 
-void MisraGries::runSketch() {
-    for (auto val : input) {
-        update(val);
-    }
-}
-
-counterType MisraGries::storeCountsToCounter() {
-    counterType outputCounter;
-    for (auto& [key, value] : counter) {
-        outputCounter.push_back({key, value});
-    }
-    return outputCounter;
-}
-
-int main(int argc, char *argv[]) {
-    checkNumberOfArguments(argc, MISRA_NUMBER_OF_ARGUMENTS);
-    std::string inputFilePath = argv[1];
-    std::string outputFilePath = argv[2];
-    int seed = std::stoull(argv[3]);
-    int k = std::stoull(argv[4]);
-    MisraGries misra(k, inputFilePath, outputFilePath);
-    misra.run();
-    return 0;
+std::size_t MisraGries::memoryUsage() const {
+    // Probably just temporary
+    return sizeof(*this) + counters.size() * sizeof(std::unordered_map<Key, Count>::value_type);
 }
